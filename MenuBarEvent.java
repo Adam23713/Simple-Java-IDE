@@ -32,6 +32,12 @@ class MenuBarEvent implements ActionListener, ItemListener
 			new ColorSlide(menuBar.mainWindow);
 			return;
 		}
+		
+		if( e.getActionCommand() == "Setting" )
+		{
+			new CompileSetting();
+			return;
+		}
 	}
 
 }

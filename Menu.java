@@ -14,6 +14,7 @@ class Menu extends JMenuBar
 		this.mainWindow = mainWindow;
 		initializeFileMenu();
 		initializeEditMenu();
+		initializeSettingMenu();
 	}
 	
 	private void initializeFileMenu()
@@ -37,6 +38,18 @@ class Menu extends JMenuBar
 		fileMenu.add(exit);
 		
 		this.add(fileMenu);
+	}
+	
+	private void initializeSettingMenu()
+	{
+		JMenu buildMenu = new JMenu("Buid & Run");
+		
+		JMenuItem setting = new JMenuItem("Setting");
+		setting.addActionListener(eventListener);
+		
+		buildMenu.add(setting);
+		
+		this.add(buildMenu);
 	}
 	
 	private void initializeEditMenu()

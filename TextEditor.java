@@ -26,7 +26,7 @@ class TextEditor extends JFrame
 	private void init()
 	{
 		setTitle("Java Text Editor");
-		setSize(400,430);
+		setSize(600,450);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		BorderLayout grid = new BorderLayout(15,15);
 		setLayout(grid);
