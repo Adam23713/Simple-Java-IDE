@@ -8,7 +8,7 @@ import javax.swing.border.EtchedBorder;
 class TextEditor extends JFrame
 {
 	JTextArea textArea;
-	JPanel textPanel;
+	JPanel workPanel;
 	
 	Menu menuBar = new Menu(this);
 	
@@ -16,8 +16,8 @@ class TextEditor extends JFrame
 	{
 		init();
 		
-		textPanel = createTextPanel();
-		this.add("Center", textPanel);
+		workPanel = createWorkPanel();
+		this.add("Center", workPanel);
 		this.add("North", new SpecToolBar(this));
 		
 		this.setVisible(true);
@@ -34,7 +34,7 @@ class TextEditor extends JFrame
 		this.setJMenuBar(menuBar);
 	}
 	
-	private JPanel createTextPanel()
+	private JPanel createWorkPanel()
 	{
 		JPanel panel = new JPanel();
 		textArea = new JTextArea();
@@ -44,7 +44,8 @@ class TextEditor extends JFrame
 		
 		panel.setLayout(new BorderLayout());
 		JScrollPane scroll = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		panel.add(scroll);
+		panel.add("North", PagesPanel.getInstance());
+		panel.add("Center", scroll);
 		
 		// Modify some properties.
 		textArea.setRows(10);
@@ -64,5 +65,10 @@ class TextEditor extends JFrame
 	{
 		textArea.setForeground(newColor);
 		textArea.repaint();
+	}
+	
+	public void setText(String str)
+	{
+		textArea.setText(str);
 	}
 }
