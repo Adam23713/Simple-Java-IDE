@@ -1,15 +1,18 @@
 import java.awt.*;
 import java.util.*;
+import java.io.File;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.event.*;
+import javax.swing.JOptionPane;
 import javax.swing.border.EtchedBorder;
 
 class TextEditor extends JFrame
 {
-	PagesPanel pagesPanel;
-	JTextArea textArea;
-	JPanel workPanel;
+    PagesPanel pagesPanel;
+	private JScrollPane scroll;
+	private JTextArea textArea;
+	private JPanel workPanel;
 	
 	Menu menuBar = new Menu(this);
 	
@@ -44,7 +47,7 @@ class TextEditor extends JFrame
 		textArea.setWrapStyleWord(true);
 		
 		panel.setLayout(new BorderLayout());
-		JScrollPane scroll = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 		pagesPanel = PagesPanel.getInstance(this);
 		JScrollPane scrollPane = new JScrollPane(pagesPanel,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -87,12 +90,59 @@ class TextEditor extends JFrame
 		textArea.setEnabled(value);
 	}
 	
+	public void setSeek(int seek)
+	{
+		textArea.setCaretPosition(seek);
+	}
+		
 	public void createNewFile(String title)
 	{
 		if(title == null)
 		{
 			pagesPanel.addNewPage("Unnamed","",false);
 			return;
+		}
+	}
+	
+	public void showErrorDialog(String arg1, String arg2)
+	{
+		JOptionPane.showMessageDialog(this,arg1,arg2,JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public void saveFile(String fileName)
+	{
+		FileOperations fileOperator = new FileOperations(this);
+		
+		File file;
+		if(fileName == null)
+		{
+			file = fileOperator.saveFileDialog();
+			if(file == null) return;
+			fileName = file.getAbsolutePath();
+		}
+		else
+			file = new File(fileName);
+			
+		fileOperator.saveFile(file,textArea.getText());
+		pagesPanel.savePage(fileName);
+	}
+	
+	public void openFile(File targetFile)
+	{
+		FileOperations fileOperator = new FileOperations(this);
+		
+		if(targetFile == null)
+		{
+			targetFile = fileOperator.openFileDialog();
+			if(targetFile == null)
+			{
+				return;
+			}
+			String text = fileOperator.readFile(targetFile);
+			if(text != null)
+			{
+				pagesPanel.addNewPage(targetFile.getName(),text,true);
+			}
 		}
 	}
 }

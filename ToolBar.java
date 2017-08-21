@@ -27,6 +27,8 @@ class SpecToolBar extends JToolBar implements ActionListener
 		buildAndRunButton = new JButton(buildAndRun);
 		
 		newButton.addActionListener(this);
+		openButton.addActionListener(this);
+		saveButton.addActionListener(this);
 		
 		this.add(newButton);
 		this.add(openButton);
@@ -38,5 +40,16 @@ class SpecToolBar extends JToolBar implements ActionListener
 	{
 		if(e.getSource() == newButton)
 			mainWindow.createNewFile(null);
+			
+		if(e.getSource() == openButton)
+			mainWindow.openFile(null);
+			
+		if(e.getSource() == saveButton)
+		{
+			if(mainWindow.pagesPanel.isSaved() ==  true)
+				mainWindow.saveFile(mainWindow.pagesPanel.getPageName());
+			else
+				mainWindow.saveFile(null);
+		}
 	}
 }

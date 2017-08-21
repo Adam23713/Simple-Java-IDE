@@ -21,18 +21,24 @@ class Menu extends JMenuBar
 	{
 		JMenu fileMenu = new JMenu("File");
 		
+		JMenuItem newFile = new JMenuItem("New File");
 		JMenuItem fileOpen = new JMenuItem("Open File");
-		JMenuItem saveOpen = new JMenuItem("Save File");
+		JMenuItem saveFile = new JMenuItem("Save File");
+		JMenuItem saveAs = new JMenuItem("Save As...");
 		JMenuItem sendEmail = new JMenuItem("Send To E-Mail");
 		JMenuItem exit = new JMenuItem("Exit");
 		
+		newFile.addActionListener(eventListener);
+		saveAs.addActionListener(eventListener);
 		fileOpen.addActionListener(eventListener);
-		saveOpen.addActionListener(eventListener);
+		saveFile.addActionListener(eventListener);
 		sendEmail.addActionListener(eventListener);
 		exit.addActionListener(eventListener);
 		
+		fileMenu.add(newFile);
 		fileMenu.add(fileOpen);
-		fileMenu.add(saveOpen);
+		fileMenu.add(saveFile);
+		fileMenu.add(saveAs);
 		fileMenu.add(sendEmail);
 		fileMenu.addSeparator();
 		fileMenu.add(exit);

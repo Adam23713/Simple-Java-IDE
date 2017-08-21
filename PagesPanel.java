@@ -7,8 +7,10 @@ import javax.swing.border.EtchedBorder;
 
 public class PagesPanel extends JPanel
 {
+	private int unnamedCounter;
 	private int activePage;
 	private int counter;
+	ArrayList<Boolean> savedPage = null;
 	ArrayList<JPanel> pages = null;
 	ArrayList<JLabel> pageName = null;
 	ArrayList<JLabel> closeButtons = null;
@@ -22,6 +24,8 @@ public class PagesPanel extends JPanel
 		this.setLayout(new FlowLayout(FlowLayout.LEFT,0,0));
 		
 		counter = 0;
+		unnamedCounter = 0;
+		savedPage = new ArrayList<Boolean>();
 		pages = new ArrayList<JPanel>();
 		pageName = new ArrayList<JLabel>();
 		closeButtons = new ArrayList<JLabel>();
@@ -29,9 +33,25 @@ public class PagesPanel extends JPanel
 		
 		addNewPage("Unnamed", "", false);
 	}
-	
-	public void addNewPage(String title, String text, boolean saved)
+		
+	public void addNewPage(String title, String text, boolean loaded)
 	{
+		
+		//If one Unnamed page opened and load a exist file------------------------------------
+		if(loaded == true && counter == 1 && unnamedCounter != 0)
+		{
+			unnamedCounter = 0;
+			mainWindow.setTitle("Java Text Editor  ---   " + pageName.get(0).getText());
+			pageName.get(0).setText(title);
+			pageName.get(0).setForeground(Color.BLACK);
+			pageString.set(0,text);
+			savedPage.set(0,true);
+			mainWindow.setText(text);
+			mainWindow.setSeek(0);
+			return;
+		}
+		//------------------------------------------------------------------------------------
+		
 		counter++;
 		if(counter == 1)
 		{
@@ -41,9 +61,11 @@ public class PagesPanel extends JPanel
 		
 		
 		FlowLayout layout = new FlowLayout(FlowLayout.CENTER,15,5);
-		//Create new page
 		JLabel button = new JLabel(new ImageIcon("icons/close.jpg"));
-		JLabel label = new JLabel(title + " " + counter);
+		
+		if(title.equals("Unnamed")) title = title + " " + (++unnamedCounter);
+		JLabel label = new JLabel(title);
+		mainWindow.setTitle("Java Text Editor  ---   " + label.getText());
 		
 		//Close Button event-------------------------------------------------------
 		button.addMouseListener(new MouseAdapter()  
@@ -54,8 +76,9 @@ public class PagesPanel extends JPanel
 			}  
 		});
 		//-------------------------------------------------------------------------
-		
-		if(saved == false)
+		if(loaded == true)
+			label.setForeground(Color.BLACK);
+		else
 			label.setForeground(Color.RED);
 			
 		JPanel newPanel = new JPanel();
@@ -83,9 +106,12 @@ public class PagesPanel extends JPanel
 			pageString.set(activePage,mainWindow.getText());
 		}
 		mainWindow.setText(text);
+		if(loaded == true)
+			mainWindow.setSeek(0);
 		
 		//Add to vector
 		activePage = counter - 1;
+		savedPage.add(false);
 		pages.add(newPanel);
 		pageName.add(label);
 		closeButtons.add(button);
@@ -98,9 +124,30 @@ public class PagesPanel extends JPanel
 		mainWindow.repaint();
 	}
 	
+	public void savePage(String fileName)
+	{
+		savedPage.set(activePage,true);
+		pageName.get(activePage).setText(fileName);
+		pageName.get(activePage).setForeground(Color.BLACK);
+		pageString.set(activePage,mainWindow.getText());
+		mainWindow.setTitle("Java Text Editor  ---   " + pageName.get(activePage).getText());
+		revalidate();
+        repaint();
+	}
+	
 	public int getPagesNumber()
 	{
 		return counter;
+	}
+	
+	public String getPageName()
+	{
+		return pageName.get(activePage).getText();
+	}
+	
+	public boolean isSaved()
+	{
+		return savedPage.get(activePage);
 	}
 	
 	private void setPageBorder(JPanel page, boolean active)
@@ -133,6 +180,8 @@ public class PagesPanel extends JPanel
 				activePage = i;
 				setPageBorder(pages.get(activePage),true);
 				mainWindow.setText(pageString.get(activePage));
+				mainWindow.setSeek(0);
+				mainWindow.setTitle("Java Text Editor  ---   " + pageName.get(activePage).getText());
 			}
 		}
 	}
@@ -152,7 +201,9 @@ public class PagesPanel extends JPanel
 				
 				if(counter == 0)
 				{
+					unnamedCounter = 0;
 					mainWindow.setText("");
+					mainWindow.setTitle("Java Text Editor");
 					mainWindow.setEnabletTextArea(false);
 					mainWindow.changeBackgroundColor(Color.GRAY);
 				}
@@ -161,6 +212,8 @@ public class PagesPanel extends JPanel
 					activePage = counter - 1;
 					mainWindow.setText(pageString.get(activePage));
 					setPageBorder(pages.get(activePage),true);
+					mainWindow.setTitle("Java Text Editor  ---   " + pageName.get(activePage).getText());
+					mainWindow.setSeek(0);
 					
 				}
 				revalidate();
