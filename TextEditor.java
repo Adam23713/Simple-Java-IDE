@@ -7,6 +7,7 @@ import javax.swing.border.EtchedBorder;
 
 class TextEditor extends JFrame
 {
+	PagesPanel pagesPanel;
 	JTextArea textArea;
 	JPanel workPanel;
 	
@@ -43,8 +44,12 @@ class TextEditor extends JFrame
 		textArea.setWrapStyleWord(true);
 		
 		panel.setLayout(new BorderLayout());
-		JScrollPane scroll = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		panel.add("North", PagesPanel.getInstance());
+		JScrollPane scroll = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		pagesPanel = PagesPanel.getInstance(this);
+		JScrollPane scrollPane = new JScrollPane(pagesPanel,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
+		panel.add("North", scrollPane);
 		panel.add("Center", scroll);
 		
 		// Modify some properties.
@@ -67,8 +72,27 @@ class TextEditor extends JFrame
 		textArea.repaint();
 	}
 	
+	public String getText()
+	{
+		return textArea.getText();
+	}
+	
 	public void setText(String str)
 	{
 		textArea.setText(str);
+	}
+	
+	public void setEnabletTextArea(boolean value)
+	{
+		textArea.setEnabled(value);
+	}
+	
+	public void createNewFile(String title)
+	{
+		if(title == null)
+		{
+			pagesPanel.addNewPage("Unnamed","",false);
+			return;
+		}
 	}
 }

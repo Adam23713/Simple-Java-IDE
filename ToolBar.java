@@ -7,6 +7,10 @@ import javax.swing.event.*;
 class SpecToolBar extends JToolBar implements ActionListener
 {
 	TextEditor mainWindow;
+	JButton newButton;
+	JButton openButton;
+	JButton saveButton;
+	JButton buildAndRunButton;
 	
 	public SpecToolBar(TextEditor mainWindow)
 	{
@@ -17,10 +21,12 @@ class SpecToolBar extends JToolBar implements ActionListener
 		ImageIcon saveFile = new ImageIcon("icons/Save-icon.jpg");
 		ImageIcon buildAndRun = new ImageIcon("icons/buildAndRun.jpg");
 		
-		JButton newButton = new JButton(newFile);
-		JButton openButton = new JButton(openFile);
-		JButton saveButton = new JButton(saveFile);
-		JButton buildAndRunButton = new JButton(buildAndRun);
+		newButton = new JButton(newFile);
+		openButton = new JButton(openFile);
+		saveButton = new JButton(saveFile);
+		buildAndRunButton = new JButton(buildAndRun);
+		
+		newButton.addActionListener(this);
 		
 		this.add(newButton);
 		this.add(openButton);
@@ -30,6 +36,7 @@ class SpecToolBar extends JToolBar implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		
+		if(e.getSource() == newButton)
+			mainWindow.createNewFile(null);
 	}
 }
