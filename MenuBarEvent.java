@@ -41,28 +41,24 @@ class MenuBarEvent implements ActionListener, ItemListener
 		
 		if( e.getActionCommand() == "Open File" )
 		{
-			menuBar.mainWindow.openFile(null);
+			menuBar.mainWindow.openFile();
 			return;
 		}
 		
 		if( e.getActionCommand() == "New File" )
 		{
-			menuBar.mainWindow.createNewFile(null);
+			menuBar.mainWindow.createNewFile();
 			return;
 		}
 		
 		if( e.getActionCommand() == "Save File" )
 		{
-			if(menuBar.mainWindow.pagesPanel.isSaved() ==  true)
-				menuBar.mainWindow.saveFile(menuBar.mainWindow.pagesPanel.getPageName());
-			else
-				menuBar.mainWindow.saveFile(null);
+			menuBar.mainWindow.saveFile();
 			return;
 		}
-		
 		if( e.getActionCommand() == "Save As..." )
 		{
-			menuBar.mainWindow.saveFile(null);
+			menuBar.mainWindow.saveAs();
 			return;
 		}
 	}

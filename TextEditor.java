@@ -95,13 +95,9 @@ class TextEditor extends JFrame
 		textArea.setCaretPosition(seek);
 	}
 		
-	public void createNewFile(String title)
+	public void createNewFile()
 	{
-		if(title == null)
-		{
-			pagesPanel.addNewPage("Unnamed","",false);
-			return;
-		}
+		pagesPanel.addNewUnnamedPagePanel();
 	}
 	
 	public void showErrorDialog(String arg1, String arg2)
@@ -109,40 +105,69 @@ class TextEditor extends JFrame
 		JOptionPane.showMessageDialog(this,arg1,arg2,JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public void saveFile(String fileName)
+	public void saveAs()
 	{
 		FileOperations fileOperator = new FileOperations(this);
 		
 		File file;
-		if(fileName == null)
+		file = fileOperator.saveFileDialog();
+		if(file == null)
 		{
-			file = fileOperator.saveFileDialog();
-			if(file == null) return;
-			fileName = file.getAbsolutePath();
+			showErrorDialog("I can't save the file","File Error");
+			return;
 		}
-		else
-			file = new File(fileName);
-			
+		String filePath = file.getAbsolutePath();
+		String fileName = file.getName();
 		fileOperator.saveFile(file,textArea.getText());
-		pagesPanel.savePage(fileName);
+		pagesPanel.savePage(fileName,filePath);
 	}
 	
-	public void openFile(File targetFile)
+	public void saveFile()
 	{
 		FileOperations fileOperator = new FileOperations(this);
 		
-		if(targetFile == null)
+		File file;
+		if(pagesPanel.unnamedPage())
 		{
-			targetFile = fileOperator.openFileDialog();
-			if(targetFile == null)
+			file = fileOperator.saveFileDialog();
+			if(file == null)
 			{
+				showErrorDialog("I can't save the file","File Error");
 				return;
 			}
-			String text = fileOperator.readFile(targetFile);
-			if(text != null)
-			{
-				pagesPanel.addNewPage(targetFile.getName(),text,true);
-			}
+		}
+		else
+		{
+			file = new File(pagesPanel.getActivePageFileName());
+		}
+		String filePath = file.getAbsolutePath();
+		String fileName = file.getName();
+		fileOperator.saveFile(file,textArea.getText());
+		pagesPanel.savePage(fileName,filePath);
+	}
+	
+	public void openFile()
+	{
+		FileOperations fileOperator = new FileOperations(this);
+		
+		File file = fileOperator.openFileDialog();
+		if(file == null)
+		{			
+			showErrorDialog("I can't open the file","File Error");
+			return;
+		}
+		String text = fileOperator.readFile(file);
+		String filePath = file.getAbsolutePath();
+		String fileName = file.getName();
+		if(text != null)
+		{
+			pagesPanel.addPagePanel(new PagePanel(text,fileName,filePath));
+			return;
+		}
+		else
+		{
+			showErrorDialog("I can't read the file","File Error");
+			return;
 		}
 	}
 }
