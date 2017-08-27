@@ -63,7 +63,9 @@ public class PagesPanel extends JPanel
 		{
 			Pages.get(activePage).setActive(false);
 			Pages.get(activePage).setPageText(mainWindow.getText());
+			mainWindow.textListener.setBlock(true);
 			mainWindow.setText(panel.getText());
+			mainWindow.textListener.setBlock(false);
 			mainWindow.setSeek(0);
 		}
 		activePage = Pages.size() - 1;
@@ -98,7 +100,9 @@ public class PagesPanel extends JPanel
 		}
 		
 		addListenerToPanel(panel);
+		mainWindow.textListener.setBlock(true);
 		mainWindow.setText(panel.getText());
+		mainWindow.textListener.setBlock(false);
 		mainWindow.setTitle("Java Text Editor  ---   " + panel.getFilePath());
 		this.add(panel);
 		mainWindow.setSeek(0);
@@ -120,17 +124,21 @@ public class PagesPanel extends JPanel
 	{
 		int index = Pages.indexOf(panel);
 		if( activePage == index ) return;
+	
+		mainWindow.textListener.setBlock(true);
 		
 		//Save data
 		Pages.get(activePage).setActive(false);
-		Pages.get(activePage).setPageText(mainWindow.getText());
-				
+		Pages.get(activePage).setPageText(mainWindow.getText());		
+		
 		//Load data
 		activePage = index;
 		panel.setActive(true);
 		mainWindow.setText(panel.getText());
 		mainWindow.setSeek(0);
 		mainWindow.setTitle("Java Text Editor  ---   " + panel.getFilePath());
+		
+		mainWindow.textListener.setBlock(false);
 	}
 	
 	public void deletePage(PagePanel panel)
@@ -143,18 +151,22 @@ public class PagesPanel extends JPanel
 		{
 			panel.resetUnnamedPageCounter();
 			activePage = -1;
+			mainWindow.textListener.setBlock(true);
 			mainWindow.setText("");
+			mainWindow.textListener.setBlock(false);
 			mainWindow.setTitle("Java Text Editor");
 			mainWindow.setEnabletTextArea(false);
 			mainWindow.changeBackgroundColor(Color.GRAY);
 			refreshPanel();
 			return;
 		}
-		
+
 		//Choose Last of Page
 		activePage = Pages.size() - 1;
 		Pages.get(activePage).setActive(true);
+		mainWindow.textListener.setBlock(true);
 		mainWindow.setText(Pages.get(activePage).getText());
+		mainWindow.textListener.setBlock(false);
 		mainWindow.setTitle("Java Text Editor  ---   " + Pages.get(activePage).getFilePath());
 		mainWindow.setSeek(0);
 		refreshPanel();
@@ -168,6 +180,12 @@ public class PagesPanel extends JPanel
 	public boolean unnamedPage()
 	{
 		return Pages.get(activePage).getUnnamed();
+	}
+	
+	public void textChanged()
+	{	 
+		Pages.get(activePage).setSaved(false);
+		Pages.get(activePage).setColor(Color.RED);
 	}
 	
 	private void refreshPanel()

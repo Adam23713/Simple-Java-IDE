@@ -9,7 +9,8 @@ import javax.swing.border.EtchedBorder;
 
 class TextEditor extends JFrame
 {
-    PagesPanel pagesPanel;
+    private PagesPanel pagesPanel;
+    TextListener textListener;
 	private JScrollPane scroll;
 	private JTextArea textArea;
 	private JPanel workPanel;
@@ -20,7 +21,9 @@ class TextEditor extends JFrame
 	{
 		init();
 		
+		textListener = new TextListener(this);
 		workPanel = createWorkPanel();
+		textArea.getDocument().addDocumentListener(textListener);
 		this.add("Center", workPanel);
 		this.add("North", new SpecToolBar(this));
 		
@@ -169,5 +172,10 @@ class TextEditor extends JFrame
 			showErrorDialog("I can't read the file","File Error");
 			return;
 		}
+	}
+	
+	public PagesPanel getPagesPanel()
+	{
+		return pagesPanel;
 	}
 }
