@@ -24,6 +24,7 @@ class Menu extends JMenuBar
 		JMenuItem newFile = new JMenuItem("New File");
 		JMenuItem fileOpen = new JMenuItem("Open File");
 		JMenuItem saveFile = new JMenuItem("Save File");
+		JMenuItem saveAllFile = new JMenuItem("Save All");
 		JMenuItem saveAs = new JMenuItem("Save As...");
 		JMenuItem sendEmail = new JMenuItem("Send To E-Mail");
 		JMenuItem exit = new JMenuItem("Exit");
@@ -32,12 +33,14 @@ class Menu extends JMenuBar
 		saveAs.addActionListener(eventListener);
 		fileOpen.addActionListener(eventListener);
 		saveFile.addActionListener(eventListener);
+		saveAllFile.addActionListener(eventListener);
 		sendEmail.addActionListener(eventListener);
 		exit.addActionListener(eventListener);
 		
 		fileMenu.add(newFile);
 		fileMenu.add(fileOpen);
 		fileMenu.add(saveFile);
+		fileMenu.add(saveAllFile);
 		fileMenu.add(saveAs);
 		fileMenu.add(sendEmail);
 		fileMenu.addSeparator();

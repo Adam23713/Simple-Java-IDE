@@ -122,14 +122,28 @@ class TextEditor extends JFrame
 		String filePath = file.getAbsolutePath();
 		String fileName = file.getName();
 		fileOperator.saveFile(file,textArea.getText());
-		pagesPanel.savePage(fileName,filePath);
+		pagesPanel.savePage(fileName,filePath,true);
 	}
 	
-	public void saveFile()
+	public void saveAllFile()
 	{
+		int index = pagesPanel.getActivePageIndex();
+		for(int i = 0; i < pagesPanel.pagesSize(); i++)
+		{
+			pagesPanel.setActivePage(i);
+			if(i == index)
+				saveFile(textArea.getText());
+			else
+				saveFile(pagesPanel.getText());
+		}
+		pagesPanel.setActivePage(index);
+	}
+	
+	public void saveFile(String text)
+	{
+		File file;
 		FileOperations fileOperator = new FileOperations(this);
 		
-		File file;
 		if(pagesPanel.unnamedPage())
 		{
 			file = fileOperator.saveFileDialog();
@@ -145,8 +159,19 @@ class TextEditor extends JFrame
 		}
 		String filePath = file.getAbsolutePath();
 		String fileName = file.getName();
-		fileOperator.saveFile(file,textArea.getText());
-		pagesPanel.savePage(fileName,filePath);
+		
+		//Select and save text------------------------------------------
+		if(text == null)
+		{
+			fileOperator.saveFile(file,textArea.getText());
+			pagesPanel.savePage(fileName,filePath,true);
+		}
+		else
+		{
+			fileOperator.saveFile(file,text);
+			pagesPanel.savePage(fileName,filePath,false);
+		}
+		//--------------------------------------------------------------
 	}
 	
 	public void openFile()

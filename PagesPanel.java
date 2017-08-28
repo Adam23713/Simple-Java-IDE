@@ -28,15 +28,21 @@ public class PagesPanel extends JPanel
 		return instance;
 	}
 	
-	public void savePage(String name, String path)
+	
+	public void savePage(String name, String path, boolean active)
 	{
 		Pages.get(activePage).setUnnamedFalse();
 		Pages.get(activePage).setSaved(true);
-		Pages.get(activePage).setPageText(mainWindow.getText());
 		Pages.get(activePage).setTitle(name);
 		Pages.get(activePage).setFilePath(path);
 		Pages.get(activePage).setColor(Color.BLACK);
-		mainWindow.setTitle("Java Text Editor  ---   " + path);
+		
+		if(active)
+		{
+			Pages.get(activePage).setPageText(mainWindow.getText());
+			mainWindow.setTitle("Java Text Editor  ---   " + path);
+		}
+		
 		revalidate();
         repaint();
 	}
@@ -194,5 +200,26 @@ public class PagesPanel extends JPanel
         repaint();
         mainWindow.revalidate();
 		mainWindow.repaint();
+	}
+
+	public String getText()
+	{
+		return Pages.get(activePage).getText();
+	}
+
+	public void setActivePage(int index)
+	{
+		if(index < Pages.size())
+			activePage = index;
+	}
+
+	public int pagesSize()
+	{
+		return Pages.size();
+	}
+
+	public int getActivePageIndex()
+	{
+		return activePage;
 	}
 }

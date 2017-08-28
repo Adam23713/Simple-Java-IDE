@@ -53,7 +53,12 @@ class MenuBarEvent implements ActionListener, ItemListener
 		
 		if( e.getActionCommand() == "Save File" )
 		{
-			menuBar.mainWindow.saveFile();
+			menuBar.mainWindow.saveFile(null);
+			return;
+		}
+		if( e.getActionCommand() == "Save All" )
+		{
+			menuBar.mainWindow.saveAllFile();
 			return;
 		}
 		if( e.getActionCommand() == "Save As..." )
