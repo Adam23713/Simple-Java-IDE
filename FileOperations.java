@@ -10,6 +10,26 @@ public class FileOperations
 		mainWindow = win;
 	}
 	
+	public File openFile(String fileName)
+	{
+		try
+		{
+			File file = new File(fileName);
+			if(file != null)
+				return file;
+			else
+				return null;
+		}
+		catch(NullPointerException e)
+		{
+			return null;
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
+	}
+	
 	public File openFileDialog()
 	{
 		JFileChooser fileChooser = new JFileChooser();
@@ -61,24 +81,28 @@ public class FileOperations
 	{
 		if(targetFile == null) return null;
 
+		FileInputStream file = null;
 		String datas = null;
 		try
 		{
 		
-			FileInputStream file = new FileInputStream(targetFile);
+			file = new FileInputStream(targetFile);
 			byte[] buffer = new byte[(int)targetFile.length()];
-		
 			file.read(buffer);
 			file.close();
 			datas = new String(buffer);
 		}
+		catch(FileNotFoundException e)
+		{
+			mainWindow.showErrorDialog("The file can't be opened",e.getMessage());
+		}
 		catch(IOException e)
 		{
-			mainWindow.showErrorDialog("The file can't be opened","IOException Error!");
+			mainWindow.showErrorDialog("The file can't be opened",e.getMessage());
 		}
 		catch(Exception e)
 		{
-			mainWindow.showErrorDialog("The file can't be opened","Unexpected Error!");
+			mainWindow.showErrorDialog("The file can't be opened",e.getMessage());
 		}
 		finally
 		{

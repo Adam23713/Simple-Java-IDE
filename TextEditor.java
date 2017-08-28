@@ -17,15 +17,19 @@ class TextEditor extends JFrame
 	
 	Menu menuBar = new Menu(this);
 	
-	public TextEditor()
+	public TextEditor(String[] files)
 	{
 		init();
-		
 		textListener = new TextListener(this);
 		workPanel = createWorkPanel();
 		textArea.getDocument().addDocumentListener(textListener);
 		this.add("Center", workPanel);
 		this.add("North", new SpecToolBar(this));
+		
+		for(int i = 0; i<files.length; i++)
+			System.out.println(files[i]);
+		
+		openAllFile(files);
 		
 		this.setVisible(true);
 	}
@@ -174,17 +178,36 @@ class TextEditor extends JFrame
 		//--------------------------------------------------------------
 	}
 	
+	public void openAllFile(String[] files)
+	{
+		FileOperations fileOperator = new FileOperations(this);
+		for(int i = 0; i < files.length; i++)
+		{
+			File file = fileOperator.openFile(files[i]);
+			if(file != null)
+			{
+				readFile(file);
+			}
+		}
+	}
+	
 	public void openFile()
 	{
 		FileOperations fileOperator = new FileOperations(this);
-		
 		File file = fileOperator.openFileDialog();
 		if(file == null)
 		{			
 			showErrorDialog("I can't open the file","File Error");
 			return;
 		}
-		String text = fileOperator.readFile(file);
+		readFile(file);
+	}
+	
+	private void readFile(File file)
+	{
+		String text;
+		FileOperations fileOperator = new FileOperations(this);
+		text = fileOperator.readFile(file);
 		String filePath = file.getAbsolutePath();
 		String fileName = file.getName();
 		if(text != null)
