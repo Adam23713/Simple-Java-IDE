@@ -25,12 +25,7 @@ class TextEditor extends JFrame
 		textArea.getDocument().addDocumentListener(textListener);
 		this.add("Center", workPanel);
 		this.add("North", new SpecToolBar(this));
-		
-		for(int i = 0; i<files.length; i++)
-			System.out.println(files[i]);
-		
 		openAllFile(files);
-		
 		this.setVisible(true);
 	}
 	
@@ -125,7 +120,16 @@ class TextEditor extends JFrame
 		}
 		String filePath = file.getAbsolutePath();
 		String fileName = file.getName();
-		fileOperator.saveFile(file,textArea.getText());
+		
+		try
+		{
+			fileOperator.saveFile(file,textArea.getText());
+		}
+		catch(FileOperationsException e)
+		{
+			showErrorDialog(e.getMessage(),"IOException Error!");
+			return;
+		}
 		pagesPanel.savePage(fileName,filePath,true);
 	}
 	
@@ -167,12 +171,28 @@ class TextEditor extends JFrame
 		//Select and save text------------------------------------------
 		if(text == null)
 		{
-			fileOperator.saveFile(file,textArea.getText());
+			try
+			{
+				fileOperator.saveFile(file,textArea.getText());
+			}
+			catch(FileOperationsException e)
+			{
+				showErrorDialog(e.getMessage(),"IOException Error!");
+				return;
+			}
 			pagesPanel.savePage(fileName,filePath,true);
 		}
 		else
 		{
-			fileOperator.saveFile(file,text);
+			try
+			{
+				fileOperator.saveFile(file,text);
+			}
+			catch(FileOperationsException e)
+			{
+				showErrorDialog(e.getMessage(),"IOException Error!");
+				return;
+			}
 			pagesPanel.savePage(fileName,filePath,false);
 		}
 		//--------------------------------------------------------------
@@ -207,7 +227,17 @@ class TextEditor extends JFrame
 	{
 		String text;
 		FileOperations fileOperator = new FileOperations(this);
-		text = fileOperator.readFile(file);
+		
+		try
+		{
+			text = fileOperator.readFile(file);
+		}
+		catch(FileOperationsException e)
+		{
+			showErrorDialog(e.getMessage(),"IOException Error!");
+			return;
+		}
+		
 		String filePath = file.getAbsolutePath();
 		String fileName = file.getName();
 		if(text != null)

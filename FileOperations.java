@@ -1,6 +1,14 @@
 import javax.swing.JFileChooser;
 import java.io.*;
 
+class FileOperationsException extends Exception
+{
+	public FileOperationsException(String message)
+	{
+		super(message);
+	}
+}
+
 public class FileOperations
 {
 	TextEditor mainWindow;
@@ -56,7 +64,7 @@ public class FileOperations
 		
 	}
 	
-	public void saveFile(File file, String text)
+	public void saveFile(File file, String text) throws FileOperationsException
 	{
 		if(file == null) return;
 		
@@ -68,16 +76,16 @@ public class FileOperations
 		}
 		catch(IOException e)
 		{
-			mainWindow.showErrorDialog("The file can't be write","IOException Error!");
+			throw new FileOperationsException(e.getMessage());
 		}
 		catch(Exception e)
 		{
-			mainWindow.showErrorDialog("The file can't be write","Unexpected Error!");
+			throw new FileOperationsException(e.getMessage());
 		}
 		
 	}
 	
-	public String readFile(File targetFile)
+	public String readFile(File targetFile) throws FileOperationsException
 	{
 		if(targetFile == null) return null;
 
@@ -94,15 +102,15 @@ public class FileOperations
 		}
 		catch(FileNotFoundException e)
 		{
-			mainWindow.showErrorDialog("The file can't be opened",e.getMessage());
+			throw new FileOperationsException(e.getMessage());
 		}
 		catch(IOException e)
 		{
-			mainWindow.showErrorDialog("The file can't be opened",e.getMessage());
+			throw new FileOperationsException(e.getMessage());
 		}
 		catch(Exception e)
 		{
-			mainWindow.showErrorDialog("The file can't be opened",e.getMessage());
+			throw new FileOperationsException(e.getMessage());
 		}
 		finally
 		{
