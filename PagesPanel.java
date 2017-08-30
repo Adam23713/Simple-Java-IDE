@@ -28,6 +28,13 @@ public class PagesPanel extends JPanel
 		return instance;
 	}
 	
+	public String[] getFileList()
+	{
+		String[] array = new String[Pages.size()];
+		for(int i = 0; i < Pages.size(); i++)
+			array[i] = Pages.get(i).getFilePath();
+		return array;
+	}
 	
 	public void savePage(String name, String path, boolean active)
 	{

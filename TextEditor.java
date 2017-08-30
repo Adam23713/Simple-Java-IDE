@@ -10,22 +10,25 @@ import javax.swing.border.EtchedBorder;
 class TextEditor extends JFrame
 {
     private PagesPanel pagesPanel;
+    private Settings setting;
     TextListener textListener;
 	private JScrollPane scroll;
 	private JTextArea textArea;
 	private JPanel workPanel;
-	
 	Menu menuBar = new Menu(this);
 	
-	public TextEditor(String[] files)
+	public TextEditor(Settings setting)
 	{
 		init();
+		this.setting = setting;
 		textListener = new TextListener(this);
 		workPanel = createWorkPanel();
 		textArea.getDocument().addDocumentListener(textListener);
 		this.add("Center", workPanel);
 		this.add("North", new SpecToolBar(this));
-		openAllFile(files);
+		
+		openAllFile();
+		
 		this.setVisible(true);
 	}
 	
@@ -33,11 +36,38 @@ class TextEditor extends JFrame
 	{
 		setTitle("Java Text Editor");
 		setSize(600,450);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent event)
+			{
+				exitProcedure();
+			}
+		});
+		
 		BorderLayout grid = new BorderLayout(15,15);
 		setLayout(grid);
 		
 		this.setJMenuBar(menuBar);
+	}
+	
+	public void exitProcedure()
+	{
+		setting.setOpenedFile(pagesPanel.getFileList());
+		try
+		{
+			setting.writeXMLFile();
+		}
+		catch(SettingsException e)
+		{
+			
+		}
+		
+		this.dispose();
+		System.exit(0);
 	}
 	
 	private JPanel createWorkPanel()
@@ -198,8 +228,10 @@ class TextEditor extends JFrame
 		//--------------------------------------------------------------
 	}
 	
-	public void openAllFile(String[] files)
+	public void openAllFile()
 	{
+		if(setting == null) return;
+		String[] files = setting.getFilesName();
 		FileOperations fileOperator = new FileOperations(this);
 		for(int i = 0; i < files.length; i++)
 		{
