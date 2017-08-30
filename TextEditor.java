@@ -13,7 +13,7 @@ class TextEditor extends JFrame
     private Settings setting;
     TextListener textListener;
 	private JScrollPane scroll;
-	private JTextArea textArea;
+	private JTextPane textArea;
 	private JPanel workPanel;
 	Menu menuBar = new Menu(this);
 	
@@ -72,24 +72,23 @@ class TextEditor extends JFrame
 	
 	private JPanel createWorkPanel()
 	{
-		JPanel panel = new JPanel();
-		textArea = new JTextArea();
 		
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
+		//Create TextPane-----------------------------------------------
+		textArea = new JTextPane();
+		JScrollPane scrollPane1 = new JScrollPane(textArea);
+		TextLineNumber tln = new TextLineNumber(textArea);
+		scrollPane1.setRowHeaderView( tln );
+		//--------------------------------------------------------------
 		
-		panel.setLayout(new BorderLayout());
-		scroll = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+		//Create Pages Panel
 		pagesPanel = PagesPanel.getInstance(this);
 		JScrollPane scrollPane = new JScrollPane(pagesPanel,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		
+		//Create and set panel
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
 		panel.add("North", scrollPane);
-		panel.add("Center", scroll);
-		
-		// Modify some properties.
-		textArea.setRows(10);
-		textArea.setColumns(10);
+		panel.add("Center", scrollPane1);
 		panel.setBorder(new EtchedBorder());
 
 		return panel;
