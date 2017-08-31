@@ -1,16 +1,11 @@
-import java.io.File;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
+import java.awt.*;
+import java.util.*;
+import java.io.*;
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import javax.xml.transform.dom.DOMSource;
 
 
 class SettingsException extends Exception
@@ -50,7 +45,7 @@ class SettingsException extends Exception
 public class Settings
 {
 	String xmlFileName = "settings.xml";
-	String[] files;
+	String[] files = new String[0];
 	
 	public Settings(String[] filesName) throws SettingsException
 	{
@@ -60,14 +55,15 @@ public class Settings
 		}
 		catch(SettingsException e)
 		{
-			throw e;
+			//Nothing to do
 		}
 		finally
 		{
-			if(filesName.length > 0)
+			if(filesName.length > 0 || files.length == 0)
+			{
 				this.files = filesName;
+			}
 		}
-		this.files = filesName;
 	}
 	
 	public String[] getFilesName()
@@ -77,7 +73,33 @@ public class Settings
 	
 	private void readXMLFile() throws SettingsException
 	{
-		
+		ArrayList<String> filesArray = new ArrayList<String>();
+		try
+		{
+			//Init Document and Document Builder
+			File fXmlFile = new File(xmlFileName);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+			doc.getDocumentElement().normalize();
+			
+			NodeList nList = doc.getElementsByTagName("File");
+			if(nList.getLength() == 0) return;
+			
+			for(int temp = 0; temp < nList.getLength(); temp++)
+			{
+				filesArray.add(nList.item(temp).getTextContent());
+			}
+		}
+		catch(FileNotFoundException e)
+		{
+			throw new SettingsException(xmlFileName,"FileNotFoundException",e.getMessage());
+		}
+		catch(Exception e)
+		{
+			throw new SettingsException(xmlFileName,"Exception",e.getMessage());
+		}
+		files = filesArray.toArray(new String[filesArray.size()]);
 	}
 	
 	public void setOpenedFile(String[] array)

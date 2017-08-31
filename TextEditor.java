@@ -56,6 +56,7 @@ class TextEditor extends JFrame
 	
 	public void exitProcedure()
 	{
+		saveAllFile();
 		setting.setOpenedFile(pagesPanel.getFileList());
 		try
 		{
@@ -63,11 +64,13 @@ class TextEditor extends JFrame
 		}
 		catch(SettingsException e)
 		{
-			
+			//Nothing to do
 		}
-		
-		this.dispose();
-		System.exit(0);
+		finally
+		{
+			this.dispose();
+			System.exit(0);
+		}
 	}
 	
 	private JPanel createWorkPanel()
@@ -83,6 +86,7 @@ class TextEditor extends JFrame
 		//Create Pages Panel
 		pagesPanel = PagesPanel.getInstance(this);
 		JScrollPane scrollPane = new JScrollPane(pagesPanel,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		//scrollPane.setPreferredSize(pagesPanel.getPreferredSize());
 		
 		//Create and set panel
 		JPanel panel = new JPanel();
@@ -164,6 +168,8 @@ class TextEditor extends JFrame
 	
 	public void saveAllFile()
 	{
+		if(pagesPanel.pagesSize() == 0) return;
+		
 		int index = pagesPanel.getActivePageIndex();
 		for(int i = 0; i < pagesPanel.pagesSize(); i++)
 		{
@@ -178,6 +184,8 @@ class TextEditor extends JFrame
 	
 	public void saveFile(String text)
 	{
+		if(pagesPanel.pagesSize() == 0) return;
+		
 		File file;
 		FileOperations fileOperator = new FileOperations(this);
 		
@@ -185,10 +193,7 @@ class TextEditor extends JFrame
 		{
 			file = fileOperator.saveFileDialog();
 			if(file == null)
-			{
-				showErrorDialog("I can't save the file","File Error");
 				return;
-			}
 		}
 		else
 		{

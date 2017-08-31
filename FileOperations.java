@@ -60,6 +60,10 @@ public class FileOperations
         {
 			targetFile = c.getSelectedFile();
 		}
+		if(rVal == JFileChooser.CANCEL_OPTION)
+		{
+			return null;
+		}
 		return targetFile;
 		
 	}

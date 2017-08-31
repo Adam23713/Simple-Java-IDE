@@ -30,9 +30,15 @@ public class PagesPanel extends JPanel
 	
 	public String[] getFileList()
 	{
-		String[] array = new String[Pages.size()];
+		ArrayList<String> list = new ArrayList<String>();
+		String[] array;
+		
 		for(int i = 0; i < Pages.size(); i++)
-			array[i] = Pages.get(i).getFilePath();
+		{
+			if(Pages.get(i).getUnnamed() == false)
+				list.add(Pages.get(i).getFilePath());
+		}
+		array = list.toArray(new String[list.size()]);
 		return array;
 	}
 	
