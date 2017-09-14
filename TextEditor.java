@@ -9,22 +9,32 @@ import javax.swing.border.EtchedBorder;
 
 class TextEditor extends JFrame
 {
-    private PagesPanel pagesPanel;
-    private Settings setting;
-    TextListener textListener;
-	private JScrollPane scroll;
-	private JTextPane textArea;
-	private JPanel workPanel;
-	Menu menuBar = new Menu(this);
+	private int HEIGHT = 600;
+	private int WIDTH = 450;
+	private SideBar _sidebar;
+	private StatusBar _statusBar;
+    private PagesPanel _pagesPanel;
+    private Settings _setting;
+    TextListener _textListener;
+	private JScrollPane _scroll;
+	private JTextPane _textArea;
+	private JPanel _workPanel;
+	Menu _menuBar = new Menu(this);
 	
 	public TextEditor(Settings setting)
 	{
 		init();
-		this.setting = setting;
-		textListener = new TextListener(this);
-		workPanel = createWorkPanel();
-		textArea.getDocument().addDocumentListener(textListener);
-		this.add("Center", workPanel);
+		this._setting = setting;
+		
+		_textListener = new TextListener(this);
+		_workPanel = createWorkPanel();
+		_sidebar = createSideBar();
+		_statusBar = createStatusBar();
+		_textArea.getDocument().addDocumentListener(_textListener);
+		
+		this.add("South",_statusBar);
+		this.add("West",_sidebar);
+		this.add("Center", _workPanel);
 		this.add("North", new SpecToolBar(this));
 		
 		openAllFile();
@@ -35,9 +45,8 @@ class TextEditor extends JFrame
 	private void init()
 	{
 		setTitle("Java Text Editor");
-		setSize(600,450);
+		setSize(HEIGHT,WIDTH);
 		
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter()
 		{
@@ -48,19 +57,19 @@ class TextEditor extends JFrame
 			}
 		});
 		
-		BorderLayout grid = new BorderLayout(15,15);
+		BorderLayout grid = new BorderLayout(0,0);
 		setLayout(grid);
 		
-		this.setJMenuBar(menuBar);
+		this.setJMenuBar(_menuBar);
 	}
 	
 	public void exitProcedure()
 	{
 		saveAllFile();
-		setting.setOpenedFile(pagesPanel.getFileList());
+		_setting.setOpenedFile(_pagesPanel.getFileList());
 		try
 		{
-			setting.writeXMLFile();
+			_setting.writeXMLFile();
 		}
 		catch(SettingsException e)
 		{
@@ -73,20 +82,34 @@ class TextEditor extends JFrame
 		}
 	}
 	
+	private StatusBar createStatusBar()
+	{
+		StatusBar panel = new StatusBar();
+		
+		//Create element 
+		
+		return panel;
+	}
+	
+	private SideBar createSideBar()
+	{
+		SideBar panel = new SideBar(HEIGHT,150);
+		return panel;
+	}
+	
 	private JPanel createWorkPanel()
 	{
 		
 		//Create TextPane-----------------------------------------------
-		textArea = new JTextPane();
-		JScrollPane scrollPane1 = new JScrollPane(textArea);
-		TextLineNumber tln = new TextLineNumber(textArea);
+		_textArea = new JTextPane();
+		JScrollPane scrollPane1 = new JScrollPane(_textArea);
+		TextLineNumber tln = new TextLineNumber(_textArea);
 		scrollPane1.setRowHeaderView( tln );
 		//--------------------------------------------------------------
 		
 		//Create Pages Panel
-		pagesPanel = PagesPanel.getInstance(this);
-		JScrollPane scrollPane = new JScrollPane(pagesPanel,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		//scrollPane.setPreferredSize(pagesPanel.getPreferredSize());
+		_pagesPanel = PagesPanel.getInstance(this);
+		JScrollPane scrollPane = new JScrollPane(_pagesPanel,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		
 		//Create and set panel
 		JPanel panel = new JPanel();
@@ -100,39 +123,39 @@ class TextEditor extends JFrame
 	
 	public void changeBackgroundColor(Color newColor)
 	{
-		textArea.setBackground(newColor);
-		textArea.repaint();
+		_textArea.setBackground(newColor);
+		_textArea.repaint();
 	}
 	
 	public void changeTextColor(Color newColor)
 	{
-		textArea.setForeground(newColor);
-		textArea.repaint();
+		_textArea.setForeground(newColor);
+		_textArea.repaint();
 	}
 	
 	public String getText()
 	{
-		return textArea.getText();
+		return _textArea.getText();
 	}
 	
 	public void setText(String str)
 	{
-		textArea.setText(str);
+		_textArea.setText(str);
 	}
 	
 	public void setEnabletTextArea(boolean value)
 	{
-		textArea.setEnabled(value);
+		_textArea.setEnabled(value);
 	}
 	
 	public void setSeek(int seek)
 	{
-		textArea.setCaretPosition(seek);
+		_textArea.setCaretPosition(seek);
 	}
 		
 	public void createNewFile()
 	{
-		pagesPanel.addNewUnnamedPagePanel();
+		_pagesPanel.addNewUnnamedPagePanel();
 	}
 	
 	public void showErrorDialog(String arg1, String arg2)
@@ -156,40 +179,61 @@ class TextEditor extends JFrame
 		
 		try
 		{
-			fileOperator.saveFile(file,textArea.getText());
+			fileOperator.saveFile(file,_textArea.getText());
 		}
 		catch(FileOperationsException e)
 		{
 			showErrorDialog(e.getMessage(),"IOException Error!");
 			return;
 		}
-		pagesPanel.savePage(fileName,filePath,true);
+		_pagesPanel.savePage(fileName,filePath,true);
 	}
 	
 	public void saveAllFile()
 	{
-		if(pagesPanel.pagesSize() == 0) return;
+		if(_pagesPanel.pagesSize() == 0) return;
 		
-		int index = pagesPanel.getActivePageIndex();
-		for(int i = 0; i < pagesPanel.pagesSize(); i++)
+		int index = _pagesPanel.getActivePageIndex();
+		for(int i = 0; i < _pagesPanel.pagesSize(); i++)
 		{
-			pagesPanel.setActivePage(i);
+			_pagesPanel.setActivePage(i);
+			
+			//If save the file step to next page
+			if(_pagesPanel.isItSave()) continue;
+
 			if(i == index)
-				saveFile(textArea.getText());
+			{
+				saveFile(_textArea.getText());
+			}
 			else
-				saveFile(pagesPanel.getText());
+			{
+				saveFile(_pagesPanel.getText());
+			}
 		}
-		pagesPanel.setActivePage(index);
+		_pagesPanel.setActivePage(index);
+	}
+	
+	public boolean askWhatDoAtTheSave(String fileName)
+	{
+		int reply = JOptionPane.showConfirmDialog(this, "Save " + fileName + " as..." , "What should I do?", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION)
+        {
+          return true;
+        }
+        else
+        {
+           return false;
+        }
 	}
 	
 	public void saveFile(String text)
 	{
-		if(pagesPanel.pagesSize() == 0) return;
+		if(_pagesPanel.pagesSize() == 0) return;
 		
 		File file;
 		FileOperations fileOperator = new FileOperations(this);
 		
-		if(pagesPanel.unnamedPage())
+		if(_pagesPanel.unnamedPage())
 		{
 			file = fileOperator.saveFileDialog();
 			if(file == null)
@@ -197,7 +241,7 @@ class TextEditor extends JFrame
 		}
 		else
 		{
-			file = new File(pagesPanel.getActivePageFileName());
+			file = new File(_pagesPanel.getActivePageFileName());
 		}
 		String filePath = file.getAbsolutePath();
 		String fileName = file.getName();
@@ -207,14 +251,19 @@ class TextEditor extends JFrame
 		{
 			try
 			{
-				fileOperator.saveFile(file,textArea.getText());
+				fileOperator.saveFile(file,_textArea.getText());
 			}
 			catch(FileOperationsException e)
 			{
-				showErrorDialog(e.getMessage(),"IOException Error!");
-				return;
+				showErrorDialog(e.getMessage(),"I can't save the file");
+				if(askWhatDoAtTheSave( filePath ))
+				{
+					saveAs();
+					return;
+				}
+				
 			}
-			pagesPanel.savePage(fileName,filePath,true);
+			_pagesPanel.savePage(fileName,filePath,true);
 		}
 		else
 		{
@@ -224,18 +273,22 @@ class TextEditor extends JFrame
 			}
 			catch(FileOperationsException e)
 			{
-				showErrorDialog(e.getMessage(),"IOException Error!");
-				return;
+				showErrorDialog(e.getMessage(),"I can't save the file");
+				if(askWhatDoAtTheSave( filePath ))
+				{
+					saveAs();
+					return;
+				}
 			}
-			pagesPanel.savePage(fileName,filePath,false);
+			_pagesPanel.savePage(fileName,filePath,false);
 		}
 		//--------------------------------------------------------------
 	}
 	
 	public void openAllFile()
 	{
-		if(setting == null) return;
-		String[] files = setting.getFilesName();
+		if(_setting == null) return;
+		String[] files = _setting.getFilesName();
 		FileOperations fileOperator = new FileOperations(this);
 		for(int i = 0; i < files.length; i++)
 		{
@@ -278,7 +331,7 @@ class TextEditor extends JFrame
 		String fileName = file.getName();
 		if(text != null)
 		{
-			pagesPanel.addPagePanel(new PagePanel(text,fileName,filePath));
+			_pagesPanel.addPagePanel(new PagePanel(text,fileName,filePath));
 			return;
 		}
 		else
@@ -290,6 +343,6 @@ class TextEditor extends JFrame
 	
 	public PagesPanel getPagesPanel()
 	{
-		return pagesPanel;
+		return _pagesPanel;
 	}
 }
